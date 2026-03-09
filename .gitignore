@@ -1,0 +1,44 @@
+# Visual Studio
+.vs/
+bin/
+build/
+
+# CMake
+build/
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# 编译产物
+*.o
+*.obj
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+*.idb
+
+# 资源文件（保持空目录结构）
+assets/images/*
+!assets/images/.gitkeep
+assets/sounds/*
+!assets/sounds/.gitkeep
+assets/fonts/*
+!assets/fonts/.gitkeep
+
+# 临时文件
+*.tmp
+*.log
+*.user
+*.suo
+
+# IDE
+.idea/
+*.code-workspace
+*.swp
+*.swo
+
+# 操作系统
+Thumbs.db
+.DS_Store
