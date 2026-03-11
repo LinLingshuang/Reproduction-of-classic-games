@@ -171,37 +171,39 @@ struct camera {
 		}
 	}
 
-	void rotate(char key) {
-		switch (key)
+	enum mouseDirection{UP,DOWN,LEFT,RIGHT,LEFTLEAN,RIGHTLEAN};
+
+	void rotate(mouseDirection mDirction) {
+		switch (mDirction)
 		{
-		case 'Z':
+		case RIGHT:
 			setBase(xbase * cosf(Pi/180) + ybase * sinf(Pi / 180),
 					xbase * cosf(Pi / 180 + Pi / 2) + ybase * sinf(Pi / 180 + Pi / 2),
 					zbase);
 			break;
-		case 'X':
+		case LEFT:
 			setBase(xbase * cosf(-Pi / 180) + ybase * sinf(-Pi / 180),
 				xbase * cosf(-Pi / 180 + Pi / 2) + ybase * sinf(-Pi / 180 + Pi / 2),
 				zbase);
 			break;
-		case 'C':
+		case UP:
 			setBase(xbase * cosf(Pi / 180) + zbase * sinf(Pi / 180),
 				ybase,
 				xbase * cosf(Pi / 180 + Pi / 2) + zbase * sinf(Pi / 180 + Pi / 2)
 				); 
 			break;
-		case 'V':
+		case DOWN:
 			setBase(xbase * cosf(-Pi / 180) + zbase * sinf(-Pi / 180),
 				ybase,
 				xbase * cosf(-Pi / 180 + Pi / 2) + zbase * sinf(-Pi / 180 + Pi / 2)
 			);
 			break;
-		case 'R':
+		case LEFTLEAN:
 			setBase(xbase,
 				ybase * cosf(Pi / 180) + zbase * sinf(Pi / 180),
 				ybase * cosf(Pi / 180 + Pi / 2) + zbase * sinf(Pi / 180 + Pi / 2));
 			break;
-		case 'T':
+		case RIGHTLEAN:
 			setBase(xbase,
 				ybase * cosf(-Pi / 180) + zbase * sinf(-Pi / 180),
 				ybase * cosf(-Pi / 180 + Pi / 2) + zbase * sinf(-Pi / 180 + Pi / 2));
@@ -443,6 +445,7 @@ void shootOnScreen(block b,camera c) {
 
 
 int main() {
+
 	int length1 = 20, length2 = 40, length3 = 50, length4 = 100;
 	Vector3 point1(0,0,0), point2(25,25,-50), point3(-70,-60,10), point4(-10,-140,-50);
 	block* myBlocks1 = new block[length1 * 12 + 8];
@@ -489,8 +492,13 @@ int main() {
 		tickTime += time;
 
 		sf::Event gameEvent;
+		sf::Vector2i previousMousePosition = sf::Mouse::getPosition(window);
+
 		while (window.pollEvent(gameEvent))
 		{
+
+			
+
 			if (gameEvent.type == sf::Event::Closed) {
 				window.close();
 			}
@@ -502,18 +510,38 @@ int main() {
 				else if (gameEvent.key.code == sf::Keyboard::Q)myCamera.move('Q');
 				else if (gameEvent.key.code == sf::Keyboard::E)myCamera.move('E');
 
-				else if (gameEvent.key.code == sf::Keyboard::Z)myCamera.rotate('Z');
-				else if (gameEvent.key.code == sf::Keyboard::X)myCamera.rotate('X');
-				else if (gameEvent.key.code == sf::Keyboard::C)myCamera.rotate('C');
-				else if (gameEvent.key.code == sf::Keyboard::V)myCamera.rotate('V');
-				else if (gameEvent.key.code == sf::Keyboard::R)myCamera.rotate('R');
-				else if (gameEvent.key.code == sf::Keyboard::T)myCamera.rotate('T');
+				else if (gameEvent.key.code == sf::Keyboard::Z)myCamera.rotate(camera::LEFT);
+				else if (gameEvent.key.code == sf::Keyboard::X)myCamera.rotate(camera::RIGHT);
+				else if (gameEvent.key.code == sf::Keyboard::C)myCamera.rotate(camera::UP);
+				else if (gameEvent.key.code == sf::Keyboard::V)myCamera.rotate(camera::DOWN);
+				else if (gameEvent.key.code == sf::Keyboard::R)myCamera.rotate(camera::LEFTLEAN);
+				else if (gameEvent.key.code == sf::Keyboard::T)myCamera.rotate(camera::RIGHTLEAN);
 
 				for (int i = 0; i < 500; i++) {
 					for (int j = 0; j < 1000; j++) {
 						Screen[i][j] = false;
 					}
 				}
+			}
+			
+			if (gameEvent.MouseMoved==sf::Event::EventType::MouseMoved ) {
+
+				sf::Vector2i currentMousePosition = sf::Mouse::getPosition(window);
+
+				if (currentMousePosition.x > previousMousePosition.x)myCamera.rotate(camera::LEFT);
+				else if (currentMousePosition.x < previousMousePosition.x)myCamera.rotate(camera::RIGHT);
+				if (currentMousePosition.y < previousMousePosition.y)myCamera.rotate(camera::UP);
+				else if (currentMousePosition.y > previousMousePosition.y)myCamera.rotate(camera::DOWN);
+				//else if (gameEvent.mouseMove.x > 0)myCamera.rotate(camera::LEFTLEAN);
+				//else if (gameEvent.mouseMove.x > 0)myCamera.rotate(camera::RIGHTLEAN);
+
+				for (int i = 0; i < 500; i++) {
+					for (int j = 0; j < 1000; j++) {
+						Screen[i][j] = false;
+					}
+				}
+
+				previousMousePosition = currentMousePosition;
 			}
 
 		}
